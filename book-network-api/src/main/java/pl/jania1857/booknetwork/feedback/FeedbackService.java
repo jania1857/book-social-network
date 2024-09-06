@@ -17,16 +17,20 @@ public class FeedbackService {
 
 
     private final BookRepository bookRepository;
+    private final FeedbackMapper feedbackMapper;
+    private final FeedbackRepository feedbackRepository;
 
     public Integer save(FeedbackRequest request, Authentication connectedUser) {
         Book book = bookRepository.findById(request.bookId())
                 .orElseThrow(() -> new EntityNotFoundException("Could not find book"));
         User user = (User) connectedUser;
         if(!book.isShareable() || book.isArchived()) {
-            throw new OperationNotPermittedException("You cannot give a feedback - archived/shareable")
+            throw new OperationNotPermittedException("You cannot give a feedback - archived/shareable");
         }
-        if (Objects.equals(book.getOwner().getId(), user)) {}
-
-        //TODO - 6:00:00
+        if (Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot give a feedback to your own book");
+        }
+        Feedback feedback = feedbackMapper.toFeedback(request);
+        return feedbackRepository.save(feedback).getId();
     }
 }
