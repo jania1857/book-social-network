@@ -12,6 +12,7 @@ export class BookListComponent implements OnInit{
   bookResponse: PageResponseBookResponse = {};
   page = 0;
   size = 5;
+
   constructor(
     private bookService: BookService,
     private router: Router
@@ -34,23 +35,31 @@ export class BookListComponent implements OnInit{
   }
 
   goToFirstPage() {
-
+    this.page = 0;
+    this.findAllBooks();
   }
 
   goToPreviousPage() {
-
+    this.page--;
+    this.findAllBooks();
   }
 
-  goToPage(index: number) {
-
+  goToPage(page: number) {
+    this.page = page;
+    this.findAllBooks();
   }
 
   goToNextPage() {
-
+    this.page++;
+    this.findAllBooks();
   }
 
   goToLastPage() {
-
+    this.page = this.bookResponse.totalPages as number - 1;
+    this.findAllBooks();
   }
 
+  get isLastPage(): boolean {
+    return this.page == this.bookResponse.totalPages as number - 1
+  }
 }
